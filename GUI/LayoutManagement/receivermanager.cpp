@@ -184,7 +184,7 @@ void ReceiverManager::handleStopped()
 
 void ReceiverManager::handleBufferSizeChanged(int newLatency)
 {
-    infoLabel->setText(QString("Now latency <= %1 msec").arg(QString::number(newLatency)));
+    infoLabel->setText(QString("Now delay <= %1 msec").arg(QString::number(newLatency)));
 }
 
 void ReceiverManager::handleProcessedUsec(quint64 usec)

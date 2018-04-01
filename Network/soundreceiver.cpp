@@ -81,7 +81,7 @@ void SoundReceiver::setBufferLimit(int number)
     // Therefore, inf = sampleRate * sampleSize * countOfChannels * time  / 8000
     int limitInBytes = (audioFormat.sampleRate() * audioFormat.sampleSize() * audioFormat.channelCount() * limitInMsec) / 8000;
     qDebug() << "limitInBytes =" << limitInBytes;
-    bufferLimit = std::max(limitInBytes, bufferSize  * 2);
+    bufferLimit = std::max(limitInBytes, bufferSize);
     qDebug() << "bufferLimit =" << bufferLimit;
     limitInMsec = bufferLimit * 8000 / (audioFormat.sampleRate() * audioFormat.sampleSize() * audioFormat.channelCount());
     emit bufferSizeChanged(limitInMsec);
