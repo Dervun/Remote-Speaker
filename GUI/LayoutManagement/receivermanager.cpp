@@ -1,3 +1,5 @@
+#include <QHostAddress>
+
 #include "receivermanager.h"
 
 ReceiverManager::ReceiverManager(QGridLayout *newLayout)

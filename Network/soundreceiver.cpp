@@ -1,3 +1,5 @@
+#include <QHostAddress>
+
 #include "soundreceiver.h"
 
 SoundReceiver::SoundReceiver()

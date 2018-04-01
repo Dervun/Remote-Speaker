@@ -1,3 +1,5 @@
+#include <QNetworkInterface>
+
 #include "soundsender.h"
 
 SoundSender::SoundSender()

@@ -5,7 +5,7 @@ QT += multimedia core gui
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += debug c++11
+CONFIG +=  c++11
 
 
 SOURCES += main.cpp \
@@ -13,7 +13,6 @@ SOURCES += main.cpp \
     GUI/LayoutManagement/layoutmanager.cpp \
     GUI/LayoutManagement/receivermanager.cpp \
     GUI/LayoutManagement/sendermanager.cpp \
-    Network/networkobject.cpp \
     Network/soundreceiver.cpp \
     Network/soundsender.cpp
 
@@ -22,7 +21,6 @@ HEADERS  += \
     GUI/LayoutManagement/layoutmanager.h \
     GUI/LayoutManagement/receivermanager.h \
     GUI/LayoutManagement/sendermanager.h \
-    Network/networkobject.h \
     Network/soundreceiver.h \
     Network/soundsender.h
 

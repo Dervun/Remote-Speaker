@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <QtNetwork>
 #include <QAudioDeviceInfo>
 #include <QTcpSocket>
 #include <QTcpServer>
