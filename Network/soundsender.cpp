@@ -11,6 +11,12 @@ SoundSender::SoundSender()
     }
 }
 
+void SoundSender::updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat)
+{
+    deviceInfo = newDeviceInfo;
+    audioFormat = newAudioFormat;
+}
+
 bool SoundSender::start()
 {
     receiverSocket->write(getCurrentSettings());
@@ -57,13 +63,6 @@ quint16 SoundSender::getPort()
     if (!server)
         return quint16(0);
     return server->serverPort();
-}
-
-bool SoundSender::tryToConnect(const QHostAddress address, const quint16 port)
-{
-    qDebug() << "Attempt to connect sender. Something was wrong. Address: " << address << ", port: " << port;
-    return true;
-    // this functionality don't need here
 }
 
 SoundSender::~SoundSender()

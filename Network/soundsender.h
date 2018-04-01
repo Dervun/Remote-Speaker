@@ -1,28 +1,29 @@
 #pragma once
 
+#include <QObject>
+#include <QtNetwork>
+#include <QAudioDeviceInfo>
 #include <QTcpSocket>
 #include <QTcpServer>
 #include <QIODevice>
 #include <QAudioInput>
 
-#include "networkobject.h"
-
-
-class SoundSender : public NetworkObject
+class SoundSender : public QObject
 {
     Q_OBJECT
 
 public:
     explicit SoundSender();
+    void updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat);
     bool start();
     void stop();
     QHostAddress getHost();
     quint16 getPort();
-     bool tryToConnect(const QHostAddress address,const quint16 port);
     ~SoundSender();
 
 signals:
-    void newClient();
+    void connected();
+    void disconnected();
 
 private slots:
     /*!
@@ -45,6 +46,8 @@ private:
      */
     QByteArray getCurrentSettings();
 
+    QAudioDeviceInfo deviceInfo;
+    QAudioFormat audioFormat = QAudioFormat();
     QTcpServer* server = nullptr;
     QTcpSocket* receiverSocket = nullptr;
 

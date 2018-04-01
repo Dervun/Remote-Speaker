@@ -8,12 +8,12 @@ class ReceiverManager : public LayoutManager
 {
 public:
     explicit ReceiverManager(QGridLayout* newLayout);
-    ~ReceiverManager(){}
+    ~ReceiverManager();
 
 private:
     void initSpecificWidgets();
 
-    NetworkObject* networkObject = nullptr;
+    SoundReceiver* soundReceiver = nullptr;
 
     QLabel* reminderLabel = nullptr;
     QPushButton* connectButton = nullptr;

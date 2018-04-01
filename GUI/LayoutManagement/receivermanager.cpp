@@ -5,14 +5,14 @@ ReceiverManager::ReceiverManager(QGridLayout *newLayout)
     mainLayout = newLayout;
     audioMode = QAudio::Mode::AudioOutput;
 
-    networkObject = new SoundReceiver();
-    connect(networkObject, SIGNAL(connected()), this, SLOT(connected()));
-    connect(networkObject, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(networkObject, SIGNAL(badConfigure()), this, SLOT(handleBadConfigure()));
-    connect(networkObject, SIGNAL(goodConfigure()), this, SLOT(handleGoodConfigure()));
-    connect(networkObject, SIGNAL(stopped()), this, SLOT(handleStopped()));
-    connect(networkObject, SIGNAL(bufferSizeChanged(int)), this, SLOT(handleBufferSizeChanged(int)));
-    connect(networkObject, SIGNAL(processedUsec(quint64)), this, SLOT(handleProcessedUsec(quint64)));
+    soundReceiver = new SoundReceiver();
+    connect(soundReceiver, SIGNAL(connected()), this, SLOT(connected()));
+    connect(soundReceiver, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(soundReceiver, SIGNAL(badConfigure()), this, SLOT(handleBadConfigure()));
+    connect(soundReceiver, SIGNAL(goodConfigure()), this, SLOT(handleGoodConfigure()));
+    connect(soundReceiver, SIGNAL(stopped()), this, SLOT(handleStopped()));
+    connect(soundReceiver, SIGNAL(bufferSizeChanged(int)), this, SLOT(handleBufferSizeChanged(int)));
+    connect(soundReceiver, SIGNAL(processedUsec(quint64)), this, SLOT(handleProcessedUsec(quint64)));
 
     // initialization of widgets, connections and addind of widgets to mainLayout
     initAllWidgets();
@@ -20,6 +20,37 @@ ReceiverManager::ReceiverManager(QGridLayout *newLayout)
     // set correct device widget's content
     deviceLabel->setText("Output device:");
     fillDeviceBox();
+}
+
+ReceiverManager::~ReceiverManager()
+{
+    mainLayout->removeWidget(reminderLabel);
+    mainLayout->removeWidget(ipLabel);
+    mainLayout->removeWidget(portLabel);
+    mainLayout->removeWidget(ipLineEdit);
+    mainLayout->removeWidget(portLineEdit);
+    mainLayout->removeWidget(connectButton);
+    mainLayout->removeWidget(disconnectButton);
+    mainLayout->removeWidget(infoLabel);
+    mainLayout->removeWidget(timeLabel);
+
+    mainLayout->removeWidget(muteButton);
+    mainLayout->removeWidget(bufferLimitLabel);
+    mainLayout->removeWidget(bufferLimitSlider);
+
+    delete reminderLabel;
+    delete ipLabel;
+    delete portLabel;
+    delete ipLineEdit;
+    delete portLineEdit;
+    delete connectButton;
+    delete disconnectButton;
+    delete infoLabel;
+    delete timeLabel;
+
+    delete muteButton;
+    delete bufferLimitLabel;
+    delete bufferLimitSlider;
 }
 
 void ReceiverManager::initSpecificWidgets()
@@ -68,12 +99,12 @@ void ReceiverManager::initSpecificWidgets()
     connect(portLineEdit,SIGNAL(returnPressed()), this, SLOT(handleConnectButtonClicked()));
     connect(disconnectButton, SIGNAL(clicked(bool)), this, SLOT(handleDisconnectButtonClicked()));
     connect(muteButton, SIGNAL(clicked(bool)), this, SLOT(handleMuteButtonClicked()));
-    connect(bufferLimitSlider, SIGNAL(valueChanged(int)), networkObject, SLOT(setBufferLimit(int)));
+    connect(bufferLimitSlider, SIGNAL(valueChanged(int)), soundReceiver, SLOT(setBufferLimit(int)));
 }
 
 void ReceiverManager::connected()
 {
-    networkObject->updateParameters(*currentDeviceInfo, currentAudioFormat);
+    soundReceiver->updateInfo(*currentDeviceInfo);
 
     connectButton->setEnabled(false);
     disconnectButton->setEnabled(true);
@@ -117,18 +148,18 @@ void ReceiverManager::handleConnectButtonClicked()
     qDebug() << "void ReceiverManager::handleConnectButtonClicked()\n"
              << "Trying to connect to address: " << QHostAddress(ipLineEdit->text())
              << ", and port: " << portLineEdit->text().toUShort();
-    if (!networkObject->tryToConnect(QHostAddress(ipLineEdit->text()), portLineEdit->text().toUShort()))
+    if (!soundReceiver->tryToConnect(QHostAddress(ipLineEdit->text()), portLineEdit->text().toUShort()))
         infoLabel->setText("Could not connect to sender");
 }
 
 void ReceiverManager::handleDisconnectButtonClicked()
 {
-    networkObject->disconnectFromHost();
+    soundReceiver->disconnectFromHost();
 }
 
 void ReceiverManager::handleMuteButtonClicked()
 {
-    if (networkObject->mute())
+    if (soundReceiver->mute())
         muteButton->setText("Unmute");
     else
         muteButton->setText("Mute");

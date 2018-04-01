@@ -5,9 +5,9 @@ SenderManager::SenderManager(QGridLayout* newLayout)
     mainLayout = newLayout;
     audioMode = QAudio::Mode::AudioInput;
 
-    networkObject = new SoundSender();
-    connect(networkObject, SIGNAL(connected()), this, SLOT(connected()));
-    connect(networkObject, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    soundSender = new SoundSender();
+    connect(soundSender, SIGNAL(connected()), this, SLOT(connected()));
+    connect(soundSender, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
     // initialization of widgets, connections and addind of widgets to mainLayout
     initAllWidgets();
@@ -15,6 +15,27 @@ SenderManager::SenderManager(QGridLayout* newLayout)
     // set correct device widget's content
     deviceLabel->setText("Input device:");
     fillDeviceBox();
+}
+
+SenderManager::~SenderManager()
+{
+    mainLayout->removeWidget(setPreferredFormatButton);
+    mainLayout->removeWidget(ipLabel);
+    mainLayout->removeWidget(portLabel);
+    mainLayout->removeWidget(ipLineEdit);
+    mainLayout->removeWidget(portLineEdit);
+    mainLayout->removeWidget(startButton);
+    mainLayout->removeWidget(stopButton);
+    mainLayout->removeWidget(infoLabel);
+
+    delete setPreferredFormatButton;
+    delete ipLabel;
+    delete portLabel;
+    delete ipLineEdit;
+    delete portLineEdit;
+    delete startButton;
+    delete stopButton;
+    delete infoLabel;
 }
 
 void SenderManager::initSpecificWidgets()
@@ -43,8 +64,8 @@ void SenderManager::initSpecificWidgets()
     stopButton->setEnabled(false);
     infoLabel->setAlignment(Qt::AlignCenter);
 
-    ipLineEdit->setText(networkObject->getHost().toString());
-    portLineEdit->setText(QString::number(networkObject->getPort()));
+    ipLineEdit->setText(soundSender->getHost().toString());
+    portLineEdit->setText(QString::number(soundSender->getPort()));
 
     connect(setPreferredFormatButton, SIGNAL(clicked(bool)), this, SLOT(setPreferredFormat()));
     connect(startButton, SIGNAL(clicked(bool)), this, SLOT(handleStartButtonClicked()));
@@ -65,7 +86,7 @@ void SenderManager::disconnected()
     startButton->setEnabled(false);
     stopButton->setEnabled(false);
 
-    networkObject->stop();
+    soundSender->stop();
     infoLabel->setText("Receiver disconnected");
 }
 
@@ -77,8 +98,8 @@ void SenderManager::handleStartButtonClicked()
         qDebug() << "currentAudioFormat not supported, looking for the nearest";
         format = currentDeviceInfo->nearestFormat(format);
     }
-    networkObject->updateParameters(*currentDeviceInfo, format);
-    if (networkObject->start())
+    soundSender->updateInfo(*currentDeviceInfo, format);
+    if (soundSender->start())
     {
         changeBoxesToLabels();
         startButton->setEnabled(false);
@@ -95,6 +116,6 @@ void SenderManager::handleStopButtonClicked()
     startButton->setEnabled(true);
     stopButton->setEnabled(false);
 
-    networkObject->stop();
+    soundSender->stop();
     infoLabel->setText("Sending data is stopped");
 }

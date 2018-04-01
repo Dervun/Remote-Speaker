@@ -5,33 +5,9 @@ SoundReceiver::SoundReceiver()
     deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
 }
 
-void SoundReceiver::updateParameters(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat)
+void SoundReceiver::updateInfo(const QAudioDeviceInfo newDeviceInfo)
 {
     deviceInfo = newDeviceInfo;
-    Q_UNUSED(newAudioFormat);
-}
-
-bool SoundReceiver::start()
-{
-
-    // connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readDatagrams()));
-    // return udpSocket->bind(QHostAddress::Any, localPort, QUdpSocket::ShareAddress);
-    return true;
-}
-
-void SoundReceiver::stop()
-{
-    // disconnect(udpSocket, SIGNAL(readyRead()), this, SLOT(readDatagrams()));
-}
-
-QHostAddress SoundReceiver::getHost()
-{
-    return senderSocket->peerAddress();
-}
-
-quint16 SoundReceiver::getPort()
-{
-    return senderSocket->peerPort();
 }
 
 bool SoundReceiver::tryToConnect(const QHostAddress address, const quint16 port)

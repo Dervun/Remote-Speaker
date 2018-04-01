@@ -6,12 +6,12 @@ class SenderManager : public LayoutManager
 {
 public:
     explicit SenderManager(QGridLayout* newLayout);
-    ~SenderManager(){}
+    ~SenderManager();
 
 private:
     void initSpecificWidgets();
 
-    NetworkObject* networkObject = nullptr;
+    SoundSender* soundSender = nullptr;
 
     QPushButton* setPreferredFormatButton = nullptr;
     QPushButton* startButton = nullptr;

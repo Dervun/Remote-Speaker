@@ -393,33 +393,30 @@ QAudioFormat::SampleType LayoutManager::qStringToSampleType(QString qString)
 
 void LayoutManager::removeWidgetsFromLayout()
 {
-    if (mainLayout != nullptr)
-    {
-        mainLayout->removeWidget(deviceLabel);
-        mainLayout->removeWidget(deviceBox);
+    mainLayout->removeWidget(deviceLabel);
+    mainLayout->removeWidget(deviceBox);
 
-        mainLayout->removeWidget(sampleRateLabel);
-        mainLayout->removeWidget(channelCountLabel);
-        mainLayout->removeWidget(sampleSizeLabel);
-        mainLayout->removeWidget(audioCodecLabel);
-        mainLayout->removeWidget(byteOrderLabel);
-        mainLayout->removeWidget(sampleTypeLabel);
+    mainLayout->removeWidget(sampleRateLabel);
+    mainLayout->removeWidget(channelCountLabel);
+    mainLayout->removeWidget(sampleSizeLabel);
+    mainLayout->removeWidget(audioCodecLabel);
+    mainLayout->removeWidget(byteOrderLabel);
+    mainLayout->removeWidget(sampleTypeLabel);
 
-        mainLayout->removeWidget(sampleRateComboBox);
-        mainLayout->removeWidget(channelCountComboBox);
-        mainLayout->removeWidget(sampleSizeComboBox);
-        mainLayout->removeWidget(audioCodecComboBox);
-        mainLayout->removeWidget(byteOrderComboBox);
-        mainLayout->removeWidget(sampleTypeComboBox);
+    mainLayout->removeWidget(sampleRateComboBox);
+    mainLayout->removeWidget(channelCountComboBox);
+    mainLayout->removeWidget(sampleSizeComboBox);
+    mainLayout->removeWidget(audioCodecComboBox);
+    mainLayout->removeWidget(byteOrderComboBox);
+    mainLayout->removeWidget(sampleTypeComboBox);
 
-        mainLayout->removeWidget(labelForDeviceBox);
-        mainLayout->removeWidget(labelForSampleRateBox);
-        mainLayout->removeWidget(labelForChannelCountBox);
-        mainLayout->removeWidget(labelForSampleSizeBox);
-        mainLayout->removeWidget(labelForAudioCodecBox);
-        mainLayout->removeWidget(labelForByteOrderBox);
-        mainLayout->removeWidget(labelForSampleTypeBox);
-    }
+    mainLayout->removeWidget(labelForDeviceBox);
+    mainLayout->removeWidget(labelForSampleRateBox);
+    mainLayout->removeWidget(labelForChannelCountBox);
+    mainLayout->removeWidget(labelForSampleSizeBox);
+    mainLayout->removeWidget(labelForAudioCodecBox);
+    mainLayout->removeWidget(labelForByteOrderBox);
+    mainLayout->removeWidget(labelForSampleTypeBox);
 }
 
 void LayoutManager::deleteWidgets()
