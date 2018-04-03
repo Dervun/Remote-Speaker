@@ -5,7 +5,7 @@ It's a cross platform application that can send audio from device to device and 
 For deploying the application to your Android device, read [Getting Started with Qt for Android](http://doc.qt.io/qt-5/androidgs.html) or look [QtWS16- All about Qt on Android: Say hello to Qt on Android](https://www.youtube.com/watch?v=dmKNxyi_YNk).
 ## Download
 - Android: link to the [Play Market](https://play.google.com/store/apps/details?id=org.qtproject.remote_speaker)
-- Windows: link to the [executable file in .rar](https://drive.google.com/open?id=1uSyLJQ1f-yJ1tg2DxyWp0T7QdteXKO0z) (run Remote_Speaker.exe)
+- Windows: link to the [executable file in .rar](https://drive.google.com/open?id=1J8ARUl1yWT4SzjU74Je2S9hMy6u81Jjy) (run Remote_Speaker.exe)
 
 ## Needed
 - C++11 compiler
