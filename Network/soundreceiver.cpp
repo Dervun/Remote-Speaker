@@ -28,7 +28,7 @@ bool SoundReceiver::tryToConnect(const QHostAddress address, const quint16 port)
     return true;
 }
 
-void SoundReceiver::disconnectFromHost()
+void SoundReceiver::disconnectFromSender()
 {
     senderSocket->disconnectFromHost();
 }

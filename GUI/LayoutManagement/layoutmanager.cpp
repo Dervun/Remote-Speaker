@@ -224,6 +224,7 @@ void LayoutManager::initAllWidgets()
 {
     initLabelAndBox();
     initAudioOptionsWidgets();
+    fillDeviceBox();
     refreshCurrentAudioFormat();
     initSpecificWidgets();
 }

@@ -21,7 +21,6 @@ ReceiverManager::ReceiverManager(QGridLayout *newLayout)
 
     // set correct device widget's content
     deviceLabel->setText("Output device:");
-    fillDeviceBox();
 }
 
 ReceiverManager::~ReceiverManager()
@@ -94,7 +93,7 @@ void ReceiverManager::initSpecificWidgets()
     timeLabel->setAlignment(Qt::AlignCenter);
     timeLabel->setVisible(false);
     bufferLimitSlider->setRange(1, 9);
-    bufferLimitSlider->setValue(7);
+    bufferLimitSlider->setValue(6);
 
     connect(connectButton, SIGNAL(clicked(bool)), this, SLOT(handleConnectButtonClicked()));
     connect(ipLineEdit, SIGNAL(returnPressed()), portLineEdit, SLOT(setFocus()));
@@ -118,6 +117,7 @@ void ReceiverManager::connected()
     ipLineEdit->hide();
     bufferLimitLabel->show();
     bufferLimitSlider->show();
+    bufferLimitSlider->setValue(6);
     portLabel->hide();
     portLineEdit->hide();
     muteButton->show();
@@ -156,7 +156,7 @@ void ReceiverManager::handleConnectButtonClicked()
 
 void ReceiverManager::handleDisconnectButtonClicked()
 {
-    soundReceiver->disconnectFromHost();
+    soundReceiver->disconnectFromSender();
 }
 
 void ReceiverManager::handleMuteButtonClicked()
@@ -182,11 +182,12 @@ void ReceiverManager::handleStopped()
 {
     infoLabel->setText("Receiving data has been suspended");
     muteButton->setEnabled(false);
+    muteButton->setText("Mute");
 }
 
 void ReceiverManager::handleBufferSizeChanged(int newLatency)
 {
-    infoLabel->setText(QString("Now delay <= %1 msec").arg(QString::number(newLatency)));
+    infoLabel->setText(QString("Now the size of the buffer = %1 msec").arg(QString::number(newLatency)));
 }
 
 void ReceiverManager::handleProcessedUsec(quint64 usec)

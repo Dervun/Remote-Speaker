@@ -10,7 +10,10 @@ namespace Ui
     class MainWindow;
 }
 
-
+/*!
+ * \brief The MainWindow class
+ * It's main window.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -37,7 +40,7 @@ private:
     void removeWelcomeWidgets();
 
     Ui::MainWindow* ui;
-    LayoutManager* layoutManager = nullptr;
+    LayoutManager* layoutManager = nullptr; /// Manages by widgets in mainLayout
     QGridLayout* mainLayout = nullptr;
 
     // welcome wigets

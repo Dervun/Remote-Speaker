@@ -4,6 +4,10 @@
 #include "layoutmanager.h"
 #include "../../Network/soundreceiver.h"
 
+/*!
+ * \brief The ReceiverManager class
+ * Initializes specific widgets for the receiver and handle commands such as "Connect", "Mute", "Disable", etc.
+ */
 class ReceiverManager : public LayoutManager
 {
 public:
@@ -11,17 +15,22 @@ public:
     ~ReceiverManager();
 
 private:
+    /*!
+     * \brief initSpecificWidgets
+     * Initialize individual widgets for the receiver.
+     * Presetting and adding them to the mainLayout.
+     */
     void initSpecificWidgets();
 
-    SoundReceiver* soundReceiver = nullptr;
+    SoundReceiver* soundReceiver = nullptr; /// It's network and audio component
 
-    QLabel* reminderLabel = nullptr;
+    QLabel* reminderLabel = nullptr; /// Label instead of "set preffered format button"
     QPushButton* connectButton = nullptr;
     QPushButton* disconnectButton = nullptr;
-    QLabel* bufferLimitLabel = nullptr;
-    QSlider* bufferLimitSlider = nullptr;
+    QLabel* bufferLimitLabel = nullptr; /// Label for bufferLimitSlider
+    QSlider* bufferLimitSlider = nullptr; /// Slider to set the buffer limit in seconds
     QPushButton* muteButton = nullptr;
-    QLabel* timeLabel = nullptr;
+    QLabel* timeLabel = nullptr; /// Label to display how long the sound is played without loss of data
 
     quint64 lastTime = quint64(0);
 

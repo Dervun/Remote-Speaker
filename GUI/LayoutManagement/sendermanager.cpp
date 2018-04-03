@@ -14,7 +14,6 @@ SenderManager::SenderManager(QGridLayout* newLayout)
 
     // set correct device widget's content
     deviceLabel->setText("Input device:");
-    fillDeviceBox();
 }
 
 SenderManager::~SenderManager()
@@ -86,7 +85,7 @@ void SenderManager::disconnected()
     startButton->setEnabled(false);
     stopButton->setEnabled(false);
 
-    soundSender->stop();
+    soundSender->stopSending();
     infoLabel->setText("Receiver disconnected");
 }
 
@@ -99,7 +98,7 @@ void SenderManager::handleStartButtonClicked()
         format = currentDeviceInfo->nearestFormat(format);
     }
     soundSender->updateInfo(*currentDeviceInfo, format);
-    if (soundSender->start())
+    if (soundSender->startSending())
     {
         changeBoxesToLabels();
         startButton->setEnabled(false);
@@ -116,6 +115,6 @@ void SenderManager::handleStopButtonClicked()
     startButton->setEnabled(true);
     stopButton->setEnabled(false);
 
-    soundSender->stop();
+    soundSender->stopSending();
     infoLabel->setText("Sending data is stopped");
 }

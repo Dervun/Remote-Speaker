@@ -19,29 +19,25 @@ void SoundSender::updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioF
     audioFormat = newAudioFormat;
 }
 
-bool SoundSender::start()
+bool SoundSender::startSending()
 {
     receiverSocket->write(getCurrentSettings());
     receiverSocket->setSocketOption(QAbstractSocket::LowDelayOption, QVariant(1)); // Попробовать для уменьшения задержки
 
-    // When user try to start several times, creates new audioInput. It's need to clear memory.
-    if (audioInput)
-    {
-        audioInput->stop();
-        delete audioInput;
-        audioInput = nullptr;
-    }
     audioInput = new QAudioInput(deviceInfo, audioFormat);
     connect(audioInput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
     audioInput->start(receiverSocket);
 
     qDebug() << "audioInput->periodSize() = " << audioInput->periodSize();
     if (audioInput->state() == QAudio::StoppedState)
+    {
+        stopSending();
         return false;
+    }
     return true;
 }
 
-void SoundSender::stop()
+void SoundSender::stopSending()
 {
     if (audioInput)
     {
@@ -117,7 +113,7 @@ void SoundSender::handleStateChanged(QAudio::State newState)
 
 void SoundSender::handleDisconnected()
 {
-    stop();
+    stopSending();
 }
 
 void SoundSender::bytesWritten(qint64 quantity)
@@ -131,8 +127,8 @@ bool SoundSender::tryToListen(const QHostAddress &address)
 {
     if (!server->listen(address))
         return false;
-    connect(server, &QTcpServer::newConnection,
-            this, &SoundSender::newConnection);
+    connect(server, SIGNAL(newConnection()),
+            this, SLOT(newConnection()));
     return true;
 }
 

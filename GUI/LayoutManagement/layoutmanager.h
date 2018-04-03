@@ -9,6 +9,12 @@
 #include <QAudioDeviceInfo>
 #include <QtDebug>
 
+/*!
+ * \brief The LayoutManager class
+ * It's is the base class. It defines the basic behavior, makes the output of widgets for a specific layout.
+ * This class for handling commands from the user.
+ * For example, pressing a button, selecting an audio device, etc.
+ */
 class LayoutManager : public QObject
 {
     Q_OBJECT
@@ -43,8 +49,8 @@ protected slots:
     virtual void handleBadConfigure(){}
     virtual void handleGoodConfigure(){}
     virtual void handleStopped(){}
-    virtual void handleBufferSizeChanged(int newSize){Q_UNUSED(newSize)}
-    virtual void handleProcessedUsec(quint64 usec){Q_UNUSED(usec)}
+    virtual void handleBufferSizeChanged(int){}
+    virtual void handleProcessedUsec(quint64){}
 
 private slots:
     /*!
@@ -57,33 +63,37 @@ private slots:
     void refreshCurrentDeviceInfo();
 
 protected:
-    void initLabelAndBox();
     /*!
-     * \brief initAudioOptionsWidgets
-     * Allocation of memory for labels, boxes and special labels for audio options.
-     * Adding them to mainLayout.
+     * \brief initSpecificWidgets
+     * Initialize individual widgets for the Sender and the Receiver.
+     * Presetting and adding them to the mainLayout.
      */
-    void initAudioOptionsWidgets();
     virtual void initSpecificWidgets() = 0;
-    void fillDeviceBox();
+    /*!
+     * \brief initAllWidgets
+     * Initialize all widgets to mainLayout.
+     */
     void initAllWidgets();
 
-    QGridLayout* mainLayout = nullptr;
-    QAudio::Mode audioMode;
-    QAudioFormat currentAudioFormat = QAudioFormat();
-    QAudioDeviceInfo* currentDeviceInfo = nullptr;
+    QGridLayout* mainLayout = nullptr; /// class will add widgets to this layout
+    QAudio::Mode audioMode; /// Sender has Input mode, Receiver has Output mode
+    QAudioFormat currentAudioFormat = QAudioFormat(); /// Current audio format (Sample rate, channel count, ...)
+    QAudioDeviceInfo* currentDeviceInfo = nullptr; /// Info about current device (e.g. about Stereo Mix)
 
     // current widgets (different for sender and receiver)
-    QLabel* deviceLabel = nullptr;
-    QComboBox* deviceBox = nullptr;
+    QLabel* deviceLabel = nullptr; /// Label for deviceBox
+    QComboBox* deviceBox = nullptr; /// Contains all available devices
 
-    QLabel* ipLabel = nullptr;
-    QLabel* portLabel = nullptr;
-    QLineEdit* ipLineEdit = nullptr;
-    QLineEdit* portLineEdit = nullptr;
-    QLabel* infoLabel = nullptr;
+    QLabel* ipLabel = nullptr; /// Label for ipLineEdit
+    QLabel* portLabel = nullptr; /// Label for portLineEdit
+    QLineEdit* ipLineEdit = nullptr; /// Input line for ip
+    QLineEdit* portLineEdit = nullptr; /// Input line for port
+    QLabel* infoLabel = nullptr; /// Here there will be some information text
 
 private:
+    void initLabelAndBox();
+    void initAudioOptionsWidgets();
+    void fillDeviceBox();
     void fillBoxes();
     /*!
      * \brief showBoxes
