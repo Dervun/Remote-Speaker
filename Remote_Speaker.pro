@@ -43,3 +43,5 @@ RESOURCES += \
     resources.qrc
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+TRANSLATIONS = translations/ts/apptr_ru.ts

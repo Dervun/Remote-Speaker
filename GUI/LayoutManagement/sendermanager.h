@@ -8,6 +8,7 @@
  */
 class SenderManager : public LayoutManager
 {
+    Q_OBJECT
 public:
     explicit SenderManager(QGridLayout* newLayout);
     ~SenderManager();
@@ -19,6 +20,13 @@ private:
      * Presetting and adding them to the mainLayout.
      */
     void initSpecificWidgets();
+    /*!
+     * \brief changeEvent
+     * \param event
+     * Updates the text in widgets according to the new language if it changed,
+     * then transfers control to the parent class.
+     */
+    void changeEvent(QEvent* event);
 
     SoundSender* soundSender = nullptr; /// It's network and audio component
 

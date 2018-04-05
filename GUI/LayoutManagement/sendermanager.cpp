@@ -13,7 +13,7 @@ SenderManager::SenderManager(QGridLayout* newLayout)
     initAllWidgets();
 
     // set correct device widget's content
-    deviceLabel->setText("Input device:");
+    deviceLabel->setText(tr("Input device:"));
 }
 
 SenderManager::~SenderManager()
@@ -39,14 +39,14 @@ SenderManager::~SenderManager()
 
 void SenderManager::initSpecificWidgets()
 {
-    setPreferredFormatButton = new QPushButton("Set preferred format for this device");
-    ipLabel = new QLabel("your ip:");
-    portLabel = new QLabel("your port:");
+    setPreferredFormatButton = new QPushButton(tr("Set preferred format"));
+    ipLabel = new QLabel(tr("Your ip:"));
+    portLabel = new QLabel(tr("Your port:"));
     ipLineEdit = new QLineEdit;
     portLineEdit = new QLineEdit;
-    startButton = new QPushButton("Start sending");
-    stopButton = new QPushButton("Stop sending");
-    infoLabel = new QLabel("Wait for connections");
+    startButton = new QPushButton(tr("Start sending"));
+    stopButton = new QPushButton(tr("Stop sending"));
+    infoLabel = new QLabel(tr("Wait for connections"));
 
     mainLayout->addWidget(setPreferredFormatButton, 7, 0, 1, 2);
     mainLayout->addWidget(ipLabel, 8, 0);
@@ -71,12 +71,31 @@ void SenderManager::initSpecificWidgets()
     connect(stopButton, SIGNAL(clicked(bool)), this, SLOT(handleStopButtonClicked()));
 }
 
+void SenderManager::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+    {
+        deviceLabel->setText(tr("Input device:"));
+        setPreferredFormatButton->setText(tr("Set preferred format"));
+        ipLabel->setText(tr("Your ip:"));
+        portLabel->setText(tr("Your port:"));
+        startButton->setText(tr("Start sending"));
+        stopButton->setText(tr("Stop sending"));
+        infoLabel->setText(tr("Wait for connections"));
+
+        LayoutManager::changeEvent(event);
+    }
+    else
+        QWidget::changeEvent(event);
+}
+
 void SenderManager::connected()
 {
     startButton->setEnabled(true);
     stopButton->setEnabled(false);
-    infoLabel->setText("Receiver connected :)");
+    infoLabel->setText(tr("Receiver connected :)"));
     handleStartButtonClicked();
+    LayoutManager::connected();
 }
 
 void SenderManager::disconnected()
@@ -86,7 +105,8 @@ void SenderManager::disconnected()
     stopButton->setEnabled(false);
 
     soundSender->stopSending();
-    infoLabel->setText("Receiver disconnected");
+    infoLabel->setText(tr("Receiver disconnected"));
+    LayoutManager::disconnected();
 }
 
 void SenderManager::handleStartButtonClicked()
@@ -103,10 +123,10 @@ void SenderManager::handleStartButtonClicked()
         changeBoxesToLabels();
         startButton->setEnabled(false);
         stopButton->setEnabled(true);
-        infoLabel->setText("Sending data");
+        infoLabel->setText(tr("Sending data"));
     }
     else
-        infoLabel->setText("Can not start with current settings :(");
+        infoLabel->setText(tr("Can not start with current settings :("));
 }
 
 void SenderManager::handleStopButtonClicked()
@@ -116,5 +136,5 @@ void SenderManager::handleStopButtonClicked()
     stopButton->setEnabled(false);
 
     soundSender->stopSending();
-    infoLabel->setText("Sending data is stopped");
+    infoLabel->setText(tr("Sending data terminated"));
 }

@@ -8,6 +8,7 @@
 #include <QAudio>
 #include <QAudioDeviceInfo>
 #include <QtDebug>
+#include <QEvent>
 
 /*!
  * \brief The LayoutManager class
@@ -15,12 +16,16 @@
  * This class for handling commands from the user.
  * For example, pressing a button, selecting an audio device, etc.
  */
-class LayoutManager : public QObject
+class LayoutManager : public QWidget
 {
     Q_OBJECT
 
 public:
     virtual ~LayoutManager();
+
+signals:
+    void somebodyConnected();
+    void somebodyDisonnected();
 
 protected slots:
     /*!
@@ -39,8 +44,8 @@ protected slots:
      * Set default format values for this of QComboBoxes
      */
     void setPreferredFormat();
-    virtual void connected() = 0;
-    virtual void disconnected() = 0;
+    virtual void connected();
+    virtual void disconnected();
     virtual void handleStartButtonClicked(){}
     virtual void handleStopButtonClicked(){}
     virtual void handleConnectButtonClicked(){}
@@ -74,6 +79,13 @@ protected:
      * Initialize all widgets to mainLayout.
      */
     void initAllWidgets();
+    /*!
+     * \brief changeEvent
+     * \param event
+     * Updates the text in widgets according to the new language if it changed,
+     * otherwise transfers control to the parent class.
+     */
+    virtual void changeEvent(QEvent* event);
 
     QGridLayout* mainLayout = nullptr; /// class will add widgets to this layout
     QAudio::Mode audioMode; /// Sender has Input mode, Receiver has Output mode

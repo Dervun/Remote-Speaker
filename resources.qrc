@@ -1,5 +1,8 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file alias="icon.png">android/res/drawable-ldpi/icon.png</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file alias="icon.png">icons/icon.png</file>
+        <file>translations/apptr_ru.qm</file>
+        <file>icons/russia-flag.png</file>
+        <file>icons/united-kingdom-flag.png</file>
+    </qresource>
 </RCC>

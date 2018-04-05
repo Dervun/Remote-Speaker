@@ -2,7 +2,7 @@
 
 #include "receivermanager.h"
 
-ReceiverManager::ReceiverManager(QGridLayout *newLayout)
+ReceiverManager::ReceiverManager(QGridLayout* newLayout)
 {
     mainLayout = newLayout;
     audioMode = QAudio::Mode::AudioOutput;
@@ -20,7 +20,7 @@ ReceiverManager::ReceiverManager(QGridLayout *newLayout)
     initAllWidgets();
 
     // set correct device widget's content
-    deviceLabel->setText("Output device:");
+    deviceLabel->setText(tr("Output device:"));
 }
 
 ReceiverManager::~ReceiverManager()
@@ -56,18 +56,18 @@ ReceiverManager::~ReceiverManager()
 
 void ReceiverManager::initSpecificWidgets()
 {
-    reminderLabel = new QLabel("You can see supported settings above");
-    ipLabel = new QLabel("Enter ip:");
-    portLabel = new QLabel("Enter port:");
+    reminderLabel = new QLabel(tr("You can see supported settings above"));
+    ipLabel = new QLabel(tr("Enter ip:"));
+    portLabel = new QLabel(tr("Enter port:"));
     ipLineEdit = new QLineEdit;
     portLineEdit = new QLineEdit;
-    connectButton = new QPushButton("Connect");
-    disconnectButton = new QPushButton("Disconnect");
-    infoLabel = new QLabel("Enter ip and port of sender and press \"Connect\" :)");
-    timeLabel = new QLabel(QString("Sound plays for %1 seconds").arg(QString::number(0)));
+    connectButton = new QPushButton(tr("Connect"));
+    disconnectButton = new QPushButton(tr("Disconnect"));
+    infoLabel = new QLabel(tr("Enter ip and port of sender and press \"Connect\" :)"));
+    timeLabel = new QLabel(tr("Sound plays for %1 seconds").arg(QString::number(0)));
 
-    muteButton = new QPushButton("Mute");
-    bufferLimitLabel = new QLabel("Buffer size:");
+    muteButton = new QPushButton(tr("Mute"));
+    bufferLimitLabel = new QLabel(tr("Buffer size:"));
     bufferLimitSlider = new QSlider(Qt::Horizontal);
 
     mainLayout->addWidget(reminderLabel, 7, 0, 1, 2);
@@ -103,6 +103,27 @@ void ReceiverManager::initSpecificWidgets()
     connect(bufferLimitSlider, SIGNAL(valueChanged(int)), soundReceiver, SLOT(setBufferLimit(int)));
 }
 
+void ReceiverManager::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+    {
+        deviceLabel->setText(tr("Output device:"));
+        reminderLabel->setText(tr("You can see supported settings above"));
+        ipLabel->setText(tr("Enter ip:"));
+        portLabel->setText(tr("Enter port:"));
+        connectButton->setText(tr("Connect"));
+        disconnectButton->setText(tr("Disconnect"));
+        infoLabel->setText(tr("Enter ip and port of sender and press \"Connect\" :)"));
+        timeLabel->setText(tr("Sound plays for %1 seconds").arg(QString::number(0)));
+        muteButton->setText(tr("Mute"));
+        bufferLimitLabel->setText(tr("Buffer size:"));
+
+        LayoutManager::changeEvent(event);
+    }
+    else
+        QWidget::changeEvent(event);
+}
+
 void ReceiverManager::connected()
 {
     soundReceiver->updateInfo(*currentDeviceInfo);
@@ -111,7 +132,7 @@ void ReceiverManager::connected()
     disconnectButton->setEnabled(true);
     ipLineEdit->setReadOnly(true);
     portLineEdit->setReadOnly(true);
-    infoLabel->setText("Connected to sender");
+    infoLabel->setText(tr("Connected to sender"));
 
     ipLabel->hide();
     ipLineEdit->hide();
@@ -123,6 +144,7 @@ void ReceiverManager::connected()
     muteButton->show();
 
     timeLabel->setVisible(true);
+    LayoutManager::connected();
 }
 
 void ReceiverManager::disconnected()
@@ -131,7 +153,7 @@ void ReceiverManager::disconnected()
     disconnectButton->setEnabled(false);
     ipLineEdit->setReadOnly(false);
     portLineEdit->setReadOnly(false);
-    infoLabel->setText("Disconnected from sender");
+    infoLabel->setText(tr("Disconnected from sender"));
 
     bufferLimitLabel->hide();
     bufferLimitSlider->hide();
@@ -142,16 +164,17 @@ void ReceiverManager::disconnected()
     portLineEdit->show();
 
     timeLabel->setVisible(false);
+    LayoutManager::disconnected();
 }
 
 void ReceiverManager::handleConnectButtonClicked()
 {
-    infoLabel->setText("Wait for connection with sender");
+    infoLabel->setText(tr("Wait for connection with sender"));
     qDebug() << "void ReceiverManager::handleConnectButtonClicked()\n"
              << "Trying to connect to address: " << QHostAddress(ipLineEdit->text())
              << ", and port: " << portLineEdit->text().toUShort();
     if (!soundReceiver->tryToConnect(QHostAddress(ipLineEdit->text()), portLineEdit->text().toUShort()))
-        infoLabel->setText("Could not connect to sender");
+        infoLabel->setText(tr("Could not connect to sender"));
 }
 
 void ReceiverManager::handleDisconnectButtonClicked()
@@ -162,32 +185,32 @@ void ReceiverManager::handleDisconnectButtonClicked()
 void ReceiverManager::handleMuteButtonClicked()
 {
     if (soundReceiver->mute())
-        muteButton->setText("Unmute");
+        muteButton->setText(tr("Unmute"));
     else
-        muteButton->setText("Mute");
+        muteButton->setText(tr("Mute"));
 }
 
 void ReceiverManager::handleBadConfigure()
 {
-    infoLabel->setText("Unsupported configure of audio format.");
+    infoLabel->setText(tr("Unsupported configure of audio format"));
 }
 
 void ReceiverManager::handleGoodConfigure()
 {
-    infoLabel->setText("Receiving data :)");
+    infoLabel->setText(tr("Receiving data :)"));
     muteButton->setEnabled(true);
 }
 
 void ReceiverManager::handleStopped()
 {
-    infoLabel->setText("Receiving data has been suspended");
+    infoLabel->setText(tr("Receiving data has been suspended"));
     muteButton->setEnabled(false);
-    muteButton->setText("Mute");
+    muteButton->setText(tr("Mute"));
 }
 
 void ReceiverManager::handleBufferSizeChanged(int newLatency)
 {
-    infoLabel->setText(QString("Now the size of the buffer = %1 msec").arg(QString::number(newLatency)));
+    infoLabel->setText(tr("Now the size of the buffer = %1 msec").arg(QString::number(newLatency)));
 }
 
 void ReceiverManager::handleProcessedUsec(quint64 usec)
@@ -196,12 +219,12 @@ void ReceiverManager::handleProcessedUsec(quint64 usec)
     if (sec == lastTime)
         return;
     if (sec < 60)
-        timeLabel->setText(QString("Sound plays for %1 seconds without loss of data").arg(QString::number(sec)));
+        timeLabel->setText(tr("Sound plays for %1 seconds without loss of data").arg(QString::number(sec)));
     else if (sec < 3600)
-        timeLabel->setText(QString("Sound plays for %1 m %2 s without loss of data").
+        timeLabel->setText(tr("Sound plays for %1 m %2 s without loss of data").
                            arg(QString::number(sec / 60), QString::number(sec % 60)));
     else
-        timeLabel->setText(QString("Sound plays for %1 h %2 m %3 s without loss of data").
+        timeLabel->setText(tr("Sound plays for %1 h %2 m %3 s without loss of data").
                            arg(QString::number(sec / 3600), QString::number((sec % 3600) / 60), QString::number(sec % 60)));
     lastTime = sec;
 }

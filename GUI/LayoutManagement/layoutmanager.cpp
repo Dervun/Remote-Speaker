@@ -50,6 +50,16 @@ void LayoutManager::setPreferredFormat()
     sampleTypeComboBox->setCurrentIndex(sampleType);
 }
 
+void LayoutManager::connected()
+{
+    emit somebodyConnected();
+}
+
+void LayoutManager::disconnected()
+{
+    emit somebodyDisonnected();
+}
+
 void LayoutManager::showBoxes()
 {
     if (!labelForSampleRateBox->isHidden())
@@ -229,6 +239,21 @@ void LayoutManager::initAllWidgets()
     initSpecificWidgets();
 }
 
+void LayoutManager::changeEvent(QEvent* event)
+{
+    if (event->type() == QEvent::LanguageChange)
+    {
+        sampleRateLabel->setText(tr("Sample rate (Hz):"));
+        channelCountLabel->setText(tr("Channels (mono, stereo...):"));
+        sampleSizeLabel->setText(tr("Sample size (bit):"));
+        audioCodecLabel->setText(tr("Audio codec:"));
+        byteOrderLabel->setText(tr("Byte order:"));
+        sampleTypeLabel->setText(tr("Sample type:"));
+    }
+    else
+        QWidget::changeEvent(event);
+}
+
 void LayoutManager::initLabelAndBox()
 {
     deviceLabel = new QLabel;
@@ -256,12 +281,12 @@ void LayoutManager::showOptionsForCurrentDevice()
 void LayoutManager::initAudioOptionsWidgets()
 {
     // create labels
-    sampleRateLabel = new QLabel("Sample rate (Hz):");
-    channelCountLabel = new QLabel("Channels (mono, stereo...):");
-    sampleSizeLabel = new QLabel("Sample size (bits):");
-    audioCodecLabel = new QLabel("Audio codec:");
-    byteOrderLabel = new QLabel("Byte order:");
-    sampleTypeLabel = new QLabel("Sample type:");
+    sampleRateLabel = new QLabel(tr("Sample rate (Hz):"));
+    channelCountLabel = new QLabel(tr("Channels (mono, stereo...):"));
+    sampleSizeLabel = new QLabel(tr("Sample size (bit):"));
+    audioCodecLabel = new QLabel(tr("Audio codec:"));
+    byteOrderLabel = new QLabel(tr("Byte order:"));
+    sampleTypeLabel = new QLabel(tr("Sample type:"));
 
     // add labels to mainLayout
     mainLayout->addWidget(sampleRateLabel, 1, 0);
