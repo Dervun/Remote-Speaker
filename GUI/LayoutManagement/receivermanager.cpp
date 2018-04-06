@@ -92,8 +92,8 @@ void ReceiverManager::initSpecificWidgets()
     infoLabel->setAlignment(Qt::AlignCenter);
     timeLabel->setAlignment(Qt::AlignCenter);
     timeLabel->setVisible(false);
-    bufferLimitSlider->setRange(1, 9);
-    bufferLimitSlider->setValue(6);
+    bufferLimitSlider->setRange(1, 10);
+    bufferLimitSlider->setValue(5);
 
     connect(connectButton, SIGNAL(clicked(bool)), this, SLOT(handleConnectButtonClicked()));
     connect(ipLineEdit, SIGNAL(returnPressed()), portLineEdit, SLOT(setFocus()));
@@ -138,7 +138,7 @@ void ReceiverManager::connected()
     ipLineEdit->hide();
     bufferLimitLabel->show();
     bufferLimitSlider->show();
-    bufferLimitSlider->setValue(6);
+    bufferLimitSlider->setValue(5);
     portLabel->hide();
     portLineEdit->hide();
     muteButton->show();

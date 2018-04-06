@@ -84,7 +84,7 @@ public slots:
     /*!
      * \brief setBufferLimit
      * Sets new limit of the buffer.
-     * \param number Integer from 1 to 9 (or more) corresponding to a certain size in milliseconds
+     * \param number Integer from 1 to 10 (or more) corresponding to a certain size in milliseconds
      */
     void setBufferLimit(int number);
 
@@ -92,20 +92,22 @@ private slots:
     void readDatagrams();
     void handleStateChanged(QAudio::State newState);
     void handleDisconnected();
-    void configure();
     void writeDataToDevice();
 
 private:
     void truncateBuffer();
-    void readConfiguration();
+    void handleStop();
+    void handleStart(QByteArray temp);
+    void preSettings();
+    void readConfiguration(QByteArray temp);
 
     QAudioDeviceInfo deviceInfo;
     QAudioFormat audioFormat = QAudioFormat();
     QTcpSocket* senderSocket = nullptr;
     QAudioOutput* audioOutput = nullptr;
     QIODevice* audioDevice = nullptr;
-    bool configurationWasRead = false;
-    bool isGoodConfiguration = false;
+    bool playingNow = false;
+    bool firstTime = true;
 
     QByteArray buffer; /// Buffer for storing received data
     int bufferSize = 15392; /// size for writing to device

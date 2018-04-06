@@ -19,7 +19,7 @@ bool SoundReceiver::tryToConnect(const QHostAddress address, const quint16 port)
      if (!senderSocket->waitForConnected(3000))
          return false;
 
-    connect(senderSocket, &QTcpSocket::readyRead, this, &SoundReceiver::configure);
+    connect(senderSocket, &QTcpSocket::readyRead, this, &SoundReceiver::readDatagrams);
     connect(senderSocket, &QTcpSocket::disconnected, this, &SoundReceiver::disconnected);
     connect(senderSocket, &QTcpSocket::disconnected, this, &SoundReceiver::handleDisconnected);
     connect(senderSocket, &QTcpSocket::disconnected, senderSocket, &QTcpSocket::deleteLater);
@@ -51,13 +51,13 @@ void SoundReceiver::setBufferLimit(int number)
     int limitInMsec = 0;
     switch (number) {
     case 1:
-        limitInMsec = 10;
-        break;
-    case 2:
         limitInMsec = 50;
         break;
-    case 3:
+    case 2:
         limitInMsec = 100;
+        break;
+    case 3:
+        limitInMsec = 150;
         break;
     case 4:
         limitInMsec = 200;
@@ -66,16 +66,19 @@ void SoundReceiver::setBufferLimit(int number)
         limitInMsec = 300;
         break;
     case 6:
-        limitInMsec = 500;
+        limitInMsec = 400;
         break;
     case 7:
-        limitInMsec = 750;
+        limitInMsec = 500;
         break;
     case 8:
+        limitInMsec = 750;
+        break;
+    case 9:
         limitInMsec = 1000;
         break;
     default:
-        limitInMsec = 2000;
+        limitInMsec = 3000;
         break;
     }
     // inf * 8 = sampleRate * sampleSize * countOfChannels * time  / 1000
@@ -97,39 +100,42 @@ SoundReceiver::~SoundReceiver()
 
 void SoundReceiver::readDatagrams()
 {
-    if (!configurationWasRead)
-        configure();
-    QByteArray* temporaryBuffer = new QByteArray;
+    QByteArray temporaryBuffer;
     qDebug() << "serverSocket->bytesAvailable() ==" << senderSocket->bytesAvailable();
     if (senderSocket->bytesAvailable() > 0)
     {
-        temporaryBuffer->append(senderSocket->readAll());
-        if (QString::fromLocal8Bit(*temporaryBuffer).contains(QString("stop!!!")))
+        temporaryBuffer.append(senderSocket->readAll());
+        if (playingNow)
         {
-            qDebug() << "stop!!!";
-            disconnect(senderSocket, &QTcpSocket::readyRead, this, &SoundReceiver::readDatagrams);
-            connect(senderSocket, &QTcpSocket::readyRead, this, &SoundReceiver::configure);
-            configurationWasRead = false;
-            if (isGoodConfiguration && audioOutput)
+            if (QString::fromLocal8Bit(temporaryBuffer).contains(QString("stop!!!")))
             {
-                audioOutput->stop();
-                delete audioOutput;
-                audioOutput = nullptr;
-                buffer.clear();
-                isGoodConfiguration = false;
+                handleStop();
+                return;
             }
-            emit stopped();
         }
-        else if (isGoodConfiguration)
-            buffer.append(*temporaryBuffer);
+        else
+        {
+            if (QString::fromLocal8Bit(temporaryBuffer).contains(QString("start!!!")))
+            {
+                handleStart(temporaryBuffer);
+                return;
+            }
+        }
+        buffer.append(temporaryBuffer);
     }
-    delete temporaryBuffer;
     qDebug() << "buffer.size() =" << buffer.size();
-    if (audioOutput != nullptr && audioOutput->state() == QAudio::IdleState)
+    // the first time it's necessary to write data
+    if (firstTime && buffer.size() >= bufferSize)
     {
-        qint64 bytesWritten = audioDevice->write(buffer.left(bufferSize));
-        buffer.remove(0, bufferSize);
-        qDebug() << "bytesWritten =" << bytesWritten;
+        writeDataToDevice();
+        firstTime = false;
+        return;
+    }
+    // if something goes wrong, the data will still be record
+    if (buffer.size() >= bufferLimit)
+    {
+        qDebug() << "if (audioOutput != nullptr && buffer.size() > bufferLimit)";
+        writeDataToDevice();
     }
 }
 
@@ -160,29 +166,18 @@ void SoundReceiver::handleStateChanged(QAudio::State newState)
 
 void SoundReceiver::handleDisconnected()
 {
-    if (audioOutput)
-    {
-        audioOutput->stop();
-        delete audioOutput;
-        audioOutput = nullptr;
-        buffer.clear();
-    }
+    handleStop();
 }
 
-void SoundReceiver::configure()
+void SoundReceiver::preSettings()
 {
-    readConfiguration();
-
     audioOutput = new QAudioOutput(deviceInfo, audioFormat);
     connect(audioOutput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
-
-    disconnect(senderSocket, &QTcpSocket::readyRead, this, &SoundReceiver::configure);
-    connect(senderSocket, &QTcpSocket::readyRead, this, &SoundReceiver::readDatagrams);
 
     audioDevice = audioOutput->start(); // Don't  need to destroy. "The pointer will become invalid after the stream is stopped or if you start another stream."
     if (audioOutput->state() == QAudio::StoppedState)
     {
-        isGoodConfiguration = false;
+        playingNow = false;
         emit badConfigure();
         return;
     }
@@ -201,21 +196,21 @@ void SoundReceiver::configure()
     qDebug() << "audioDevice->openMode() == " << audioDevice->openMode();
 
     emit goodConfigure();
-    isGoodConfiguration = true;
+    playingNow = true;
 }
 
 void SoundReceiver::writeDataToDevice()
 {
+    if (buffer.size() > bufferLimit)
+        truncateBuffer();
     if (audioOutput != nullptr)
     {
-        if (buffer.size() > bufferLimit)
-            truncateBuffer();
         audioDevice->write(buffer.left(bufferSize));
         qDebug() << "periodSize() =" << audioOutput->periodSize() << "buffer.size() =" << buffer.size();
         qDebug() << "processedUSecs() =" << audioOutput->processedUSecs();
         buffer.remove(0, bufferSize);
+        emit processedUsec(audioOutput->processedUSecs());
     }
-    emit processedUsec(audioOutput->processedUSecs());
 }
 
 void SoundReceiver::truncateBuffer()
@@ -259,77 +254,91 @@ void SoundReceiver::truncateBuffer()
     */
 }
 
-void SoundReceiver::readConfiguration()
+void SoundReceiver::handleStop()
 {
-    QString currentSymbol = QString::fromLocal8Bit(senderSocket->read(2));
-    while (currentSymbol != QString("{{"))
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(2));
-
-    currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    QString sampleRate = QString("");
-    while (currentSymbol != QString(";"))
+    qDebug() << "stop!!!";
+    if (audioOutput != nullptr)
     {
-        if (currentSymbol == QString("{"))
-        {
-            currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-            continue;
-        }
-        sampleRate.append(currentSymbol);
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
+        audioOutput->stop();
+        delete audioOutput;
+        audioOutput = nullptr;
     }
+    buffer.clear();
+    playingNow = false;
+    firstTime = true;
+    emit stopped();
+}
+
+void SoundReceiver::handleStart(QByteArray temp)
+{
+    qDebug() << "start!!!";
+    firstTime = true;
+    readConfiguration(temp);
+    preSettings();
+}
+
+void SoundReceiver::readConfiguration(QByteArray temp)
+{
+    qDebug() << QString::fromLocal8Bit(temp);
+    int k = 0;
+    while (temp.mid(k, 8) != QString("start!!!").toLocal8Bit() && k < temp.size())
+        k++;
+    if (k + 8 >= temp.size())
+    {
+        playingNow = false;
+        emit badConfigure();
+        return;
+    }
+    temp.remove(0, k + 8);
+
+    const char separator = ';';
+    k = 0;
+    while (temp.at(k) != separator)
+        k++;
+    QString sampleRate = QString::fromLocal8Bit(temp.left(k));
     qDebug() << "sampleRate =" << sampleRate;
     audioFormat.setSampleRate(sampleRate.toInt());
+    temp.remove(0, k + 1);
 
-    currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    QString channelCount = QString("");
-    while (currentSymbol != QString(";"))
-    {
-        channelCount.append(currentSymbol);
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    }
+    k = 0;
+    while (temp.at(k) != separator)
+        k++;
+    QString channelCount = QString::fromLocal8Bit(temp.left(k));
     qDebug() << "channelCount =" << channelCount;
     audioFormat.setChannelCount(channelCount.toInt());
+    temp.remove(0, k + 1);
 
-    currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    QString sampleSize = QString("");
-    while (currentSymbol != QString(";"))
-    {
-        sampleSize.append(currentSymbol);
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    }
+    k = 0;
+    while (temp.at(k) != separator)
+        k++;
+    QString sampleSize = QString::fromLocal8Bit(temp.left(k));
     qDebug() << "sampleSize =" << sampleSize;
     audioFormat.setSampleSize(sampleSize.toInt());
+    temp.remove(0, k + 1);
 
-    currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    QString audioCodec = QString("");
-    while (currentSymbol != QString(";"))
-    {
-        audioCodec.append(currentSymbol);
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    }
+    k = 0;
+    while (temp.at(k) != separator)
+        k++;
+    QString audioCodec = QString::fromLocal8Bit(temp.left(k));
     qDebug() << "audioCodec =" << audioCodec;
     audioFormat.setCodec(audioCodec);
+    temp.remove(0, k + 1);
 
-    currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    QString byteOrder = QString("");
-    while (currentSymbol != QString(";"))
-    {
-        byteOrder.append(currentSymbol);
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    }
+    k = 0;
+    while (temp.at(k) != separator)
+        k++;
+    QString byteOrder = QString::fromLocal8Bit(temp.left(k));
     qDebug() << "byteOrder =" << byteOrder;
     if (byteOrder == QString("BigEndian"))
         audioFormat.setByteOrder(QAudioFormat::BigEndian);
     else
         audioFormat.setByteOrder(QAudioFormat::LittleEndian);
+    temp.remove(0, k + 1);
 
-    currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    QString sampleType = QString("");
-    while (currentSymbol != QString(";"))
-    {
-        sampleType.append(currentSymbol);
-        currentSymbol = QString::fromLocal8Bit(senderSocket->read(1));
-    }
+    k = 0;
+    while (temp.at(k) != separator)
+        k++;
+    QString sampleType = QString::fromLocal8Bit(temp.left(k));
     qDebug() << "sampleType =" << sampleType;
     if (sampleType == QString("SignedInt"))
         audioFormat.setSampleType(QAudioFormat::SignedInt);
@@ -339,6 +348,5 @@ void SoundReceiver::readConfiguration()
         audioFormat.setSampleType(QAudioFormat::Float);
     else
         audioFormat.setSampleType(QAudioFormat::Unknown);
-
-    configurationWasRead = true;
+    temp.clear();
 }

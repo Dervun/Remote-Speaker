@@ -81,7 +81,7 @@
         <location filename="GUI/LayoutManagement/receivermanager.cpp" line="59"/>
         <location filename="GUI/LayoutManagement/receivermanager.cpp" line="111"/>
         <source>You can see supported settings above</source>
-        <translation>Вы можете видеть поддерживаемые настройки аудио формата выше</translation>
+        <translation>Поддерживаемые настройки аудио есть выше</translation>
     </message>
     <message>
         <location filename="GUI/LayoutManagement/receivermanager.cpp" line="60"/>
@@ -111,7 +111,7 @@
         <location filename="GUI/LayoutManagement/receivermanager.cpp" line="66"/>
         <location filename="GUI/LayoutManagement/receivermanager.cpp" line="116"/>
         <source>Enter ip and port of sender and press &quot;Connect&quot; :)</source>
-        <translation>Введите ip-адрес и порт отправителя, нажмите Подключиться</translation>
+        <translation>Введите ip, порт отправителя, нажмите Подключиться</translation>
     </message>
     <message>
         <location filename="GUI/LayoutManagement/receivermanager.cpp" line="67"/>
@@ -207,7 +207,7 @@
         <location filename="GUI/LayoutManagement/sendermanager.cpp" line="42"/>
         <location filename="GUI/LayoutManagement/sendermanager.cpp" line="79"/>
         <source>Set preferred format</source>
-        <translation>Установить предпочтительный формат</translation>
+        <translation>Предпочтительный формат</translation>
     </message>
     <message>
         <location filename="GUI/LayoutManagement/sendermanager.cpp" line="43"/>
@@ -259,7 +259,7 @@
     <message>
         <location filename="GUI/LayoutManagement/sendermanager.cpp" line="129"/>
         <source>Can not start with current settings :(</source>
-        <translation>Не могу начать с текущими настройками аудио формата :(</translation>
+        <translation>Не могу начать с текущими настройками аудио :(</translation>
     </message>
     <message>
         <location filename="GUI/LayoutManagement/sendermanager.cpp" line="139"/>

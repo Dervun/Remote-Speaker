@@ -135,7 +135,7 @@ bool SoundSender::tryToListen(const QHostAddress &address)
 QByteArray SoundSender::getCurrentSettings()
 {
     QByteArray settings;
-    settings.append(QString("{{{").toLocal8Bit());
+    settings.append(QString("start!!!").toLocal8Bit());
     settings.append(QString::number(audioFormat.sampleRate()).toLocal8Bit());
     settings.append(QString(";").toLocal8Bit());
     settings.append(QString::number(audioFormat.channelCount()).toLocal8Bit());
