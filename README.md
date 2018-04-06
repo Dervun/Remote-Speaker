@@ -24,6 +24,7 @@ For get this, you can:
 2. Create a [Wireless ad hoc network](https://en.wikipedia.org/wiki/Wireless_ad_hoc_network) and connect devices to it
 
 ### Catching of output sound:
+Universal way - [Audacity](http://www.audacityteam.org/download/)
 #### Windows
 If you do not have an **input device**, such as "Stereo mix" on your PC, please read [How to Enable “Stereo Mix” in Windows and Record Audio from Your PC](https://www.howtogeek.com/howto/39532/how-to-enable-stereo-mix-in-windows-7-to-record-audio/) (Windows 7 and later)
 #### Ubuntu
