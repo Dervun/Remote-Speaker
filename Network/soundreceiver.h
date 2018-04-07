@@ -90,6 +90,7 @@ public slots:
 
 private slots:
     void readDatagrams();
+    void readCompressedDatagrams();
     void handleStateChanged(QAudio::State newState);
     void handleDisconnected();
     void writeDataToDevice();
@@ -100,6 +101,7 @@ private:
     void handleStart(QByteArray temp);
     void preSettings();
     void readConfiguration(QByteArray temp);
+    int twoBytesToInt(QByteArray twoBytes);
 
     QAudioDeviceInfo deviceInfo;
     QAudioFormat audioFormat = QAudioFormat();
@@ -112,5 +114,8 @@ private:
     QByteArray buffer; /// Buffer for storing received data
     int bufferSize = 15392; /// size for writing to device
     int bufferLimit = bufferSize * 5; /// max buffer size
+
+    bool dataCompressionWasUsed = false; /// It indicates whether data compression has been used
+    int currentSizeOfBlock = 0;
 };
 

@@ -18,7 +18,6 @@ SenderManager::SenderManager(QGridLayout* newLayout)
 
 SenderManager::~SenderManager()
 {
-    mainLayout->removeWidget(setPreferredFormatButton);
     mainLayout->removeWidget(ipLabel);
     mainLayout->removeWidget(portLabel);
     mainLayout->removeWidget(ipLineEdit);
@@ -27,7 +26,6 @@ SenderManager::~SenderManager()
     mainLayout->removeWidget(stopButton);
     mainLayout->removeWidget(infoLabel);
 
-    delete setPreferredFormatButton;
     delete ipLabel;
     delete portLabel;
     delete ipLineEdit;
@@ -39,7 +37,7 @@ SenderManager::~SenderManager()
 
 void SenderManager::initSpecificWidgets()
 {
-    setPreferredFormatButton = new QPushButton(tr("Set preferred format"));
+    useCompressionCheckBox = new QCheckBox(tr("Use compression"));
     ipLabel = new QLabel(tr("Your ip:"));
     portLabel = new QLabel(tr("Your port:"));
     ipLineEdit = new QLineEdit;
@@ -48,7 +46,7 @@ void SenderManager::initSpecificWidgets()
     stopButton = new QPushButton(tr("Stop sending"));
     infoLabel = new QLabel(tr("Waiting for connections"));
 
-    mainLayout->addWidget(setPreferredFormatButton, 7, 0, 1, 2);
+    mainLayout->addWidget(useCompressionCheckBox, 7, 0);
     mainLayout->addWidget(ipLabel, 8, 0);
     mainLayout->addWidget(ipLineEdit, 8, 1);
     mainLayout->addWidget(portLabel, 9, 0);
@@ -66,7 +64,6 @@ void SenderManager::initSpecificWidgets()
     ipLineEdit->setText(soundSender->getHost().toString());
     portLineEdit->setText(QString::number(soundSender->getPort()));
 
-    connect(setPreferredFormatButton, SIGNAL(clicked(bool)), this, SLOT(setPreferredFormat()));
     connect(startButton, SIGNAL(clicked(bool)), this, SLOT(handleStartButtonClicked()));
     connect(stopButton, SIGNAL(clicked(bool)), this, SLOT(handleStopButtonClicked()));
 }
@@ -76,7 +73,7 @@ void SenderManager::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange)
     {
         deviceLabel->setText(tr("Input device:"));
-        setPreferredFormatButton->setText(tr("Set preferred format"));
+        useCompressionCheckBox->setText(tr("Use compression"));
         ipLabel->setText(tr("Your ip:"));
         portLabel->setText(tr("Your port:"));
         startButton->setText(tr("Start sending"));
@@ -114,15 +111,16 @@ void SenderManager::handleStartButtonClicked()
     QAudioFormat format = currentAudioFormat;
     while (!currentDeviceInfo->isFormatSupported(format))
     {
-        qDebug() << "currentAudioFormat not supported, looking for the nearest";
+       qDebug() << "currentAudioFormat not supported, looking for the nearest";
         format = currentDeviceInfo->nearestFormat(format);
     }
-    soundSender->updateInfo(*currentDeviceInfo, format);
+    soundSender->updateInfo(*currentDeviceInfo, format, useCompressionCheckBox->isChecked());
     if (soundSender->startSending())
     {
         changeBoxesToLabels();
         startButton->setEnabled(false);
         stopButton->setEnabled(true);
+        useCompressionCheckBox->setEnabled(false);
         infoLabel->setText(tr("Sending data"));
     }
     else
@@ -134,6 +132,7 @@ void SenderManager::handleStopButtonClicked()
     changeLabelsToBoxes();
     startButton->setEnabled(true);
     stopButton->setEnabled(false);
+    useCompressionCheckBox->setEnabled(true);
 
     soundSender->stopSending();
     infoLabel->setText(tr("Sending data terminated"));

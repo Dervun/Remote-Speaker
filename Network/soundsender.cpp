@@ -1,4 +1,5 @@
 #include <QNetworkInterface>
+#include <QBitArray>
 
 #include "soundsender.h"
 
@@ -13,20 +14,27 @@ SoundSender::SoundSender()
     }
 }
 
-void SoundSender::updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat)
+void SoundSender::updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat, bool useCompression)
 {
     deviceInfo = newDeviceInfo;
     audioFormat = newAudioFormat;
+    this->useCompression = useCompression;
 }
 
 bool SoundSender::startSending()
 {
-    receiverSocket->write(getCurrentSettings());
-    receiverSocket->setSocketOption(QAbstractSocket::LowDelayOption, QVariant(1)); // Попробовать для уменьшения задержки
+    receiverSocket->setSocketOption(QAbstractSocket::LowDelayOption, QVariant(1));
 
     audioInput = new QAudioInput(deviceInfo, audioFormat);
-    connect(audioInput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
-    audioInput->start(receiverSocket);
+//    connect(audioInput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
+    audioDevice = audioInput->start(); // Don't  need to destroy. "The pointer will become invalid after the stream is stopped or if you start another stream."
+    qDebug() << "audioDevice->isOpen()" << audioDevice->isOpen() << "audioDevice->openMode()" << audioDevice->openMode();
+    receiverSocket->write(getCurrentSettings());
+    if (useCompression)
+        connect(audioDevice, SIGNAL(readyRead()), this, SLOT(writeDataWithCompression()));
+    else
+        connect(audioDevice, SIGNAL(readyRead()), this, SLOT(writeDataWithoutCompression()));
+
 
     qDebug() << "audioInput->periodSize() = " << audioInput->periodSize();
     if (audioInput->state() == QAudio::StoppedState)
@@ -82,33 +90,7 @@ void SoundSender::newConnection()
     receiverSocket = server->nextPendingConnection();
     connect(receiverSocket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
     connect(receiverSocket, SIGNAL(disconnected()), receiverSocket, SLOT(deleteLater()));
-//    connect(clientSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
     emit connected();
-}
-
-void SoundSender::handleStateChanged(QAudio::State newState)
-{
-    switch (newState)
-    {
-    case QAudio::StoppedState:
-        if (audioInput->error() != QAudio::NoError)
-            qDebug() << "SoundSender stopped with error code " << audioInput->error();
-        else
-            qDebug() << "SoundSender stopped without errors";
-        break;
-
-    case QAudio::ActiveState:
-        qDebug() << "O'key, SoundSender started recording - read from audioInput";
-        break;
-
-    case QAudio::SuspendedState:
-        qDebug() << "SoundSender changed state to SuspendedState";
-        break;
-
-    default:
-        qDebug() << "SoundSender changed state to IdleState";
-        break;
-    }
 }
 
 void SoundSender::handleDisconnected()
@@ -116,11 +98,45 @@ void SoundSender::handleDisconnected()
     stopSending();
 }
 
-void SoundSender::bytesWritten(qint64 quantity)
+void SoundSender::writeDataWithCompression()
 {
-    qDebug() << quantity << "bytes written";
-    if (audioInput != nullptr)
-        qDebug() << "processedUSecs()" << audioInput->processedUSecs();
+    qDebug() << "audioInput->bytesReady() =" << audioInput->bytesReady();
+    if (audioInput->bytesReady() < audioInput->periodSize())
+        return;
+    QByteArray buffer = audioDevice->read(qint64(audioInput->periodSize()));
+    qDebug() << "buffer.size() =" << buffer.size();
+    buffer = qCompress(buffer, compressionPower);
+
+    int sizeOfBlock = buffer.size();
+    qDebug() << "sizeOfBlock =" << sizeOfBlock;
+
+    QBitArray inBits = QBitArray(16);
+    for (int i = 15; sizeOfBlock > 0 && i >= 0; i--)
+    {
+        inBits[i] = sizeOfBlock % 2;
+        sizeOfBlock = sizeOfBlock >> 1;
+    }
+    qDebug() << inBits;
+    // Resulting byte array
+    QByteArray inBytes = QByteArray(2, (char) 0);
+    // Convert from QBitArray to QByteArray
+    for (int i = 0; i < 16; i++)
+        inBytes[i / 8] = (inBytes.at(i / 8) | ((inBits[i] ? 1 : 0) << (7 - (i % 8))));
+
+    // first 2 bytes, they contsains size of compressed block
+    buffer.prepend(inBytes);
+    quint64 bytesWritten = receiverSocket->write(buffer);
+    qDebug() << "bytesWritten =" << bytesWritten;
+}
+
+void SoundSender::writeDataWithoutCompression()
+{
+    qDebug() << "audioInput->bytesReady() =" << audioInput->bytesReady();
+    QByteArray buffer;
+    buffer = audioDevice->readAll();
+    qDebug() << "buffer.size() =" << buffer.size();
+    quint64 bytesWritten = receiverSocket->write(buffer);
+    qDebug() << "bytesWritten =" << bytesWritten;
 }
 
 bool SoundSender::tryToListen(const QHostAddress &address)
@@ -136,6 +152,8 @@ QByteArray SoundSender::getCurrentSettings()
 {
     QByteArray settings;
     settings.append(QString("start!!!").toLocal8Bit());
+    if (useCompression)
+        settings.append(QString("DATACOMPRESSION"));
     settings.append(QString::number(audioFormat.sampleRate()).toLocal8Bit());
     settings.append(QString(";").toLocal8Bit());
     settings.append(QString::number(audioFormat.channelCount()).toLocal8Bit());

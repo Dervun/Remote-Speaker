@@ -122,8 +122,8 @@
     <message>
         <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="69"/>
         <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="118"/>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="190"/>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="208"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="188"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="206"/>
         <source>Mute</source>
         <translation>Выключить звук</translation>
     </message>
@@ -149,48 +149,48 @@
         <translation>Ожидается соединение с отправителем</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="177"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="175"/>
         <source>Could not connect to sender</source>
         <translation>Не могу подключиться к отправителю</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="188"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="186"/>
         <source>Unmute</source>
         <translation>Включить звук</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="195"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="193"/>
         <source>Unsupported configure of audio format</source>
         <oldsource>Unsupported configure of audio format.</oldsource>
         <translation>Не поддерживаемые настройки аудио формата</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="200"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="198"/>
         <source>Receiving data :)</source>
         <translation>Получение данных :)</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="206"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="204"/>
         <source>Receiving data has been suspended</source>
         <translation>Получение данных было приостановлено</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="213"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="211"/>
         <source>Now the size of the buffer = %1 msec</source>
         <translation>Сейчас размер буфера = %1 мс</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="222"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="220"/>
         <source>Sound plays for %1 seconds without loss of data</source>
         <translation>Звук проигрывается без потерь %1 сек</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="224"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="222"/>
         <source>Sound plays for %1 m %2 s without loss of data</source>
         <translation>Звук проигрывается без потерь %1 мин %2 сек</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="227"/>
+        <location filename="../../GUI/LayoutManagement/receivermanager.cpp" line="225"/>
         <source>Sound plays for %1 h %2 m %3 s without loss of data</source>
         <translation>Звук проигрывается без потерь %1 ч %2 мин %3 сек</translation>
     </message>
@@ -199,45 +199,49 @@
     <name>SenderManager</name>
     <message>
         <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="16"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="78"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="75"/>
         <source>Input device:</source>
         <translation>Устройство ввода:</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="42"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="79"/>
         <source>Set preferred format</source>
-        <translation>Предпочтительный формат</translation>
+        <translation type="vanished">Предпочтительный формат</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="43"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="80"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="40"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="76"/>
+        <source>Use compression</source>
+        <translation>Использовать сжатие</translation>
+    </message>
+    <message>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="41"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="77"/>
         <source>Your ip:</source>
         <oldsource>your ip:</oldsource>
         <translation>Ваш ip:</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="44"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="81"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="42"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="78"/>
         <source>Your port:</source>
         <oldsource>your port:</oldsource>
         <translation>Ваш порт:</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="47"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="82"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="45"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="79"/>
         <source>Start sending</source>
         <translation>Начать отправку</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="48"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="83"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="46"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="80"/>
         <source>Stop sending</source>
         <translation>Остановить отправку</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="49"/>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="84"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="47"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="81"/>
         <source>Waiting for connections</source>
         <translation>Ожидание подключения</translation>
     </message>
@@ -246,27 +250,27 @@
         <translation type="vanished">Ожидание подключения</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="96"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="93"/>
         <source>Receiver connected :)</source>
         <translation>Получатель подключён :)</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="108"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="105"/>
         <source>Receiver disconnected</source>
         <translation>Получатель был отключён</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="126"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="124"/>
         <source>Sending data</source>
         <translation>Отправка динных</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="129"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="127"/>
         <source>Can not start with current settings :(</source>
         <translation>Не могу начать с текущими настройками аудио :(</translation>
     </message>
     <message>
-        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="139"/>
+        <location filename="../../GUI/LayoutManagement/sendermanager.cpp" line="138"/>
         <source>Sending data terminated</source>
         <oldsource>Sending data is stopped</oldsource>
         <translation>Отправка данных прекращена</translation>

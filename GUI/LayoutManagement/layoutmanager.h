@@ -39,11 +39,6 @@ protected slots:
      * Show boxes on mainLayout instead of labels respectively
      */
     void changeLabelsToBoxes();
-    /*!
-     * \brief setPreferredFormat
-     * Set default format values for this of QComboBoxes
-     */
-    void setPreferredFormat();
     virtual void connected();
     virtual void disconnected();
     virtual void handleStartButtonClicked(){}
@@ -66,6 +61,11 @@ private slots:
     void showOptionsForCurrentDevice();
     void refreshCurrentAudioFormat();
     void refreshCurrentDeviceInfo();
+    /*!
+     * \brief setPreferredFormat
+     * Set default format values for this of QComboBoxes
+     */
+    void setPreferredFormat();
 
 protected:
     /*!

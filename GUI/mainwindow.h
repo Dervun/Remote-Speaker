@@ -71,7 +71,7 @@ private:
     QPushButton* receiverButton = nullptr;
     QPushButton* senderButton = nullptr;
 
-    const QString currentVersion = QString("v1.1.1");
+    const QString currentVersion = QString("v1.1.2");
     QTranslator* translator = nullptr;
     QComboBox* translatorBox = nullptr;
 };

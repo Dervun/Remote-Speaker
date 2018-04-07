@@ -19,11 +19,11 @@ public:
     explicit SoundSender();
     /*!
      * \brief updateInfo
-     * Updates deviceInfo and .audioFormat
+     * Updates deviceInfo, audioFormat and useCompression
      * \param newDeviceInfo
      * \param newAudioFormat
      */
-    void updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat);
+    void updateInfo(const QAudioDeviceInfo newDeviceInfo, const QAudioFormat newAudioFormat, bool useCompression = false);
     /*!
      * \brief startSending
      * Sends current settings to the receiver, tries to start data transfer.
@@ -72,8 +72,8 @@ private slots:
      */
     void handleDisconnected();
 
-    void handleStateChanged(QAudio::State newState);
-    void bytesWritten(qint64 quantity);
+    void writeDataWithCompression();
+    void writeDataWithoutCompression();
 
 private:
     /*!
@@ -95,4 +95,7 @@ private:
 
     QAudioInput* audioInput = nullptr;
     QIODevice* audioDevice = nullptr;
+
+    bool useCompression = false;
+    int compressionPower = 3;
 };

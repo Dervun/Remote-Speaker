@@ -1,6 +1,7 @@
 #pragma once
 #include "layoutmanager.h"
 #include "../../Network/soundsender.h"
+#include <QCheckBox>
 
 /*!
  * \brief The SenderManager class
@@ -30,7 +31,7 @@ private:
 
     SoundSender* soundSender = nullptr; /// It's network and audio component
 
-    QPushButton* setPreferredFormatButton = nullptr;
+    QCheckBox* useCompressionCheckBox = nullptr;
     QPushButton* startButton = nullptr;
     QPushButton* stopButton = nullptr;
     

@@ -170,9 +170,7 @@ void ReceiverManager::disconnected()
 void ReceiverManager::handleConnectButtonClicked()
 {
     infoLabel->setText(tr("Wait for connection with sender"));
-    qDebug() << "void ReceiverManager::handleConnectButtonClicked()\n"
-             << "Trying to connect to address: " << QHostAddress(ipLineEdit->text())
-             << ", and port: " << portLineEdit->text().toUShort();
+    qDebug() << "void ReceiverManager::handleConnectButtonClicked()\n" << "Trying to connect to address: " << QHostAddress(ipLineEdit->text()) << ", and port: " << portLineEdit->text().toUShort();
     if (!soundReceiver->tryToConnect(QHostAddress(ipLineEdit->text()), portLineEdit->text().toUShort()))
         infoLabel->setText(tr("Could not connect to sender"));
 }
