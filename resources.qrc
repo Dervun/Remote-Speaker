@@ -4,5 +4,7 @@
         <file>translations/apptr_ru.qm</file>
         <file>icons/russia-flag.png</file>
         <file>icons/united-kingdom-flag.png</file>
+        <file>translations/apptr_fr.qm</file>
+        <file>icons/france-flag.png</file>
     </qresource>
 </RCC>

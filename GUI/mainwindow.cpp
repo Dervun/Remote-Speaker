@@ -135,6 +135,7 @@ void MainWindow::initTranslatorBox()
 
     translatorBox->addItem(QIcon(":/icons/united-kingdom-flag.png"), QString("English"), QVariant(QString("English")));
     translatorBox->addItem(QIcon(":/icons/russia-flag.png"), QString("Русский"), QVariant(QString("Русский")));
+    translatorBox->addItem(QIcon(":/icons/france-flag.png"), QString("Français"), QVariant(QString("Français")));
 
     connect(translatorBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleTranslatorChanged()));
 
@@ -145,6 +146,8 @@ QLocale::Language MainWindow::nativeToQLocale(const QString &language)
 {
     if (language == QString("Русский"))
         return QLocale::Russian;
+    if (language == QString("Français"))
+        return QLocale::French;
     return QLocale::English;
 }
 
@@ -152,5 +155,7 @@ QString MainWindow::qLocaleToNative(const QLocale::Language language)
 {
     if (language == QLocale::Russian)
         return QString("Русский");
+    if (language == QLocale::French)
+        return QString("Français");
     return QString("English");
 }

@@ -46,7 +46,7 @@ void SenderManager::initSpecificWidgets()
     portLineEdit = new QLineEdit;
     startButton = new QPushButton(tr("Start sending"));
     stopButton = new QPushButton(tr("Stop sending"));
-    infoLabel = new QLabel(tr("Wait for connections"));
+    infoLabel = new QLabel(tr("Waiting for connections"));
 
     mainLayout->addWidget(setPreferredFormatButton, 7, 0, 1, 2);
     mainLayout->addWidget(ipLabel, 8, 0);
@@ -81,7 +81,7 @@ void SenderManager::changeEvent(QEvent *event)
         portLabel->setText(tr("Your port:"));
         startButton->setText(tr("Start sending"));
         stopButton->setText(tr("Stop sending"));
-        infoLabel->setText(tr("Wait for connections"));
+        infoLabel->setText(tr("Waiting for connections"));
 
         LayoutManager::changeEvent(event);
     }

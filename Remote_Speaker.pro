@@ -44,4 +44,5 @@ RESOURCES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
-TRANSLATIONS = translations/ts/apptr_ru.ts
+TRANSLATIONS += translations/ts/apptr_ru.ts \
+    translations/ts/apptr_fr.ts
